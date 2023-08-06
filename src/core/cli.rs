@@ -11,6 +11,15 @@ impl Cli {
             .author("Rhaqim <anusiemj@gmail.com>")
             .about("Ethereum test CLI")
             .arg(
+                Arg::new("node")
+                    .help("Node to connect to")
+                    .long("node")
+                    .short('n')
+                    .number_of_values(1)
+                    .value_name("NODE")
+                    .required(true),
+            )
+            .arg(
                 Arg::new("address")
                     .help("Add a contract to the database")
                     .long("address")
@@ -63,12 +72,15 @@ impl Cli {
         let to = matches.get_one::<u64>("to").unwrap_or(&DEFAULT_TO_BLOCK);
         let binding = DEFAULT_METHOD.to_string();
         let method = matches.get_one::<String>("method").unwrap_or(&binding);
+        let binding = DEFAULT_NODE.to_string();
+        let node = matches.get_one::<String>("node").unwrap_or(&binding);
 
         let cli_args = CliArgs {
-            address: Some(address.to_string()),
-            from: Some(from.to_owned()),
-            to: Some(to.to_owned()),
-            method: Some(method.to_string()),
+            address: address.to_string(),
+            from: from.to_owned(),
+            to: to.to_owned(),
+            method: method.to_string(),
+            node: node.to_string(),
         };
 
         run(cli_args).await;

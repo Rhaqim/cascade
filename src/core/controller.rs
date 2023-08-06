@@ -1,6 +1,9 @@
+use web3::transports::WebSocket;
 use web3::Transport;
 
 use crate::log::logger;
+use crate::service::http_web3;
+use crate::service::websocket_web3;
 use std::fs::File;
 use std::io::Write;
 use std::time::Instant;
@@ -86,7 +89,7 @@ async fn test_get_block_transaction_count_by_hash(
 pub async fn test_arbitriuem() {
     logger("info", &format!("Starting test_arbitriuem"));
 
-    let http = Http::new("http://192.18.137.131").unwrap();
+    let http = Http::new("").unwrap();
     let web3s = Web3::new(http);
 
     let start_time = Instant::now(); // Start the timer
@@ -154,8 +157,26 @@ pub async fn run_concurrent(web3s: Web3<Http>) {
     }
 }
 
-pub async fn run(args: CliArgs) {}
+pub async fn run(args: CliArgs) {
+    // check if node is websocket or http
+    let node = args.node.clone();
+    let is_websocket = node.starts_with("wss://") || node.starts_with("ws://");
 
-pub async fn run_with_function() {}
+    // create web3 instance
+    if is_websocket {
+        let webs = websocket_web3(node).await;
+        run_with_function::<Web3<Http>, Web3<WebSocket>>(args, None, Some(webs)).await;
+    } else {
+        let webs = http_web3(node);
+        run_with_function::<Web3<Http>, Web3<WebSocket>>(args, Some(webs), None).await;
+    }
+}
+
+pub async fn run_with_function<A, B>(
+    args: CliArgs,
+    A: Option<Web3<Http>>,
+    B: Option<Web3<WebSocket>>,
+) {
+}
 
 pub async fn run_with_defaults() {}

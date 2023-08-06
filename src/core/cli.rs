@@ -1,13 +1,15 @@
+use crate::config::*;
+use crate::core::{run, CliArgs};
 use clap::{Arg, ArgAction, Command};
 
 pub struct Cli;
 
 impl Cli {
-    pub fn parse() {
-        let matches = Command::new("arb")
+    pub async fn parse() {
+        let matches = Command::new("monster")
             .version("0.1.0")
-            .author("Soham Zemse <???>")
-            .about("Arbitrium CLI")
+            .author("Rhaqim <anusiemj@gmail.com>")
+            .about("Ethereum test CLI")
             .arg(
                 Arg::new("address")
                     .help("Add a contract to the database")
@@ -53,16 +55,22 @@ impl Cli {
             )
             .get_matches();
 
-        let binding = "0x0".to_string();
+        let binding = DEFAULT_ADDRESS.to_string();
         let address = matches.get_one::<String>("address").unwrap_or(&binding);
-        let from = matches.get_one::<u64>("from").unwrap_or(&0);
-        let to = matches.get_one::<u64>("to").unwrap_or(&0);
-        let binding = "arbtrace_block".to_string();
+        let from = matches
+            .get_one::<u64>("from")
+            .unwrap_or(&DEFAULT_FROM_BLOCK);
+        let to = matches.get_one::<u64>("to").unwrap_or(&DEFAULT_TO_BLOCK);
+        let binding = DEFAULT_METHOD.to_string();
         let method = matches.get_one::<String>("method").unwrap_or(&binding);
 
-        println!("Address: {}", address);
-        println!("From: {}", from);
-        println!("To: {}", to);
-        println!("Method: {}", method);
+        let cli_args = CliArgs {
+            address: Some(address.to_string()),
+            from: Some(from.to_owned()),
+            to: Some(to.to_owned()),
+            method: Some(method.to_string()),
+        };
+
+        run(cli_args).await;
     }
 }

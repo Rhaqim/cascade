@@ -7,6 +7,8 @@ use std::time::Instant;
 use web3::types::{BlockNumber, Log, U64};
 use web3::{transports::Http, Web3};
 
+use super::CliArgs;
+
 async fn get_arb_logs(web3s: Web3<Http>) -> Vec<Log> {
     // let block_height: U64 = 101139981.into();
     let block_height: U64 = 22207815.into();
@@ -137,7 +139,7 @@ pub async fn run_concurrent(web3s: Web3<Http>) {
             let web3s = Web3::new(http);
 
             let block_hash = element.block_hash.unwrap();
-            test_get_block_transaction_count_by_hash(block_hash, web3s.clone()).await;
+            test_get_block_transaction_count_by_hash(block_hash, web3s.clone());
 
             let mut num = counter.lock().unwrap();
 
@@ -151,3 +153,9 @@ pub async fn run_concurrent(web3s: Web3<Http>) {
         handle.join().unwrap();
     }
 }
+
+pub async fn run(args: CliArgs) {}
+
+pub async fn run_with_function() {}
+
+pub async fn run_with_defaults() {}

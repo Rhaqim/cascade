@@ -1,5 +1,6 @@
 extern crate tokio;
 
+mod config;
 mod core;
 mod log;
 mod utils;

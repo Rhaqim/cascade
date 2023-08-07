@@ -174,9 +174,47 @@ pub async fn run(args: CliArgs) {
 
 pub async fn run_with_function<A, B>(
     args: CliArgs,
-    A: Option<Web3<Http>>,
-    B: Option<Web3<WebSocket>>,
+    a: Option<Web3<Http>>,
+    b: Option<Web3<WebSocket>>,
 ) {
+    logger("info", &format!("Starting run with args: {:?}", args));
+
+    let address = args.address.clone();
+
+    let web3h = a.clone();
+
+    if address == "0x0" {
+        run_with_defaults::<Web3<Http>>(web3h.unwrap(), args.clone()).await;
+    }
+
+    match b {
+        Some(b) => {
+            let logs = eth_query::<Web3<WebSocket>>(b, args).await;
+            // logger("info", &format!("Logs length: {:?}", logs.len()));
+        }
+        None => {
+            let logs = eth_query::<Web3<Http>>(a.unwrap(), args).await;
+            // logger("info", &format!("Logs length: {:?}", logs.len()));
+        }
+    }
 }
 
-pub async fn run_with_defaults() {}
+pub async fn run_with_defaults<A>(a: Web3<Http>, args: CliArgs) {
+    let to_block = BlockNumber::Number(args.to.into());
+    let from_block = BlockNumber::Number(args.from.into());
+
+    let logs = a
+        .eth()
+        .logs(
+            web3::types::FilterBuilder::default()
+                .from_block(from_block)
+                .to_block(to_block)
+                .build(),
+        )
+        .await
+        .expect("failed to fetch logs");
+
+    logger("info", &format!("Logs length: {:?}", logs.len()));
+}
+
+pub async fn eth_query<T>(transport: T, args: CliArgs) {}

@@ -9,7 +9,7 @@ keywords = ["node", "tester", "cli", "ethereum", "blockchain", "testing"]
 
 [dependencies]
 chrono = "0.4.23"
-clap = "4.3.19"
+clap = {version = "4.3.19", features = ["derive"] }
 diesel = { version = "2.0.4", features = ["postgres", "r2d2", "uuid", "chrono", "serde_json"] }
 dotenv = "0.15.0"
 encoding_rs = "0.8.32"

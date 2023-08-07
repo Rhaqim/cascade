@@ -21,4 +21,23 @@ This is a simple script to test a provided Ethereum node. It will run a series o
 
 ## Example
 
-1. Run `cargo run -- --node https://mainnet.infura.io/v3/your-api-key --timeout 10`
+1. Run Test with default parameters:
+
+```bash
+cargo run
+```
+
+This test will use the default parameters of:
+
+- `--node http://localhost:8545`
+- `--timeout 10`
+- `--verbose false`
+- `--address 0x1234567890123456789012345678901234567890`
+- `--method eth_getLogs`
+- `--data 0x1234567890123456789012345678901234567890`
+
+2. Run Test with custom parameters:
+
+```bash
+cargo run -- --node https://mainnet.infura.io/v3/1234567890 --timeout 10 --verbose --address 0x1234567890123456789012345678901234567890 --method eth_getBalance --data 0x1234567890123456789012345678901234567890
+```

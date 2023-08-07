@@ -29,3 +29,42 @@ pub fn logger(level: &str, message: &str) {
         _ => log_info(message),
     }
 }
+
+pub struct Logger {
+    pub scope: String,
+}
+
+pub trait CliLog {
+    fn info(&self, message: &str);
+    fn error(&self, message: &str);
+    fn warning(&self, message: &str);
+    fn debug(&self, message: &str);
+    fn trace(&self, message: &str);
+}
+
+impl CliLog for Logger {
+    fn info(&self, message: &str) {
+        let msg = self.scope.clone() + ": " + message;
+        logger("info", &msg);
+    }
+
+    fn error(&self, message: &str) {
+        let msg = self.scope.clone() + ": " + message;
+        logger("error", &msg);
+    }
+
+    fn warning(&self, message: &str) {
+        let msg = self.scope.clone() + ": " + message;
+        logger("warning", &msg);
+    }
+
+    fn debug(&self, message: &str) {
+        let msg = self.scope.clone() + ": " + message;
+        logger("debug", &msg);
+    }
+
+    fn trace(&self, message: &str) {
+        let msg = self.scope.clone() + ": " + message;
+        logger("trace", &msg);
+    }
+}

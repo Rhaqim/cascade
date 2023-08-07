@@ -21,7 +21,7 @@ This is a simple script to test a provided Ethereum node. It will run a series o
 
 ## Example
 
-1. Run Test with default parameters:
+#### Run Test with default parameters:
 
 ```bash
 cargo run
@@ -36,7 +36,7 @@ This test will use the default parameters of:
 - `--method eth_getLogs`
 - `--data 0x1234567890123456789012345678901234567890`
 
-2. Run Test with custom parameters:
+#### Run Test with custom parameters:
 
 ```bash
 cargo run -- --node https://mainnet.infura.io/v3/1234567890 --timeout 10 --verbose --address 0x1234567890123456789012345678901234567890 --method eth_getBalance --data 0x1234567890123456789012345678901234567890

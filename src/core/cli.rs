@@ -1,5 +1,5 @@
 use crate::config::*;
-use crate::core::{run, CliArgs};
+use crate::core::{cli_controller::run, CliArgs};
 use clap::{Arg, ArgAction, Command};
 
 pub struct Cli;

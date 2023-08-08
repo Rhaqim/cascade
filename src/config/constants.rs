@@ -3,3 +3,4 @@ pub const DEFAULT_FROM_BLOCK: u64 = 0;
 pub const DEFAULT_TO_BLOCK: u64 = 0;
 pub const DEFAULT_METHOD: &str = "getEthLogs";
 pub const DEFAULT_NODE: &str = "http://localhost:8545";
+pub const DEFAULT_TIMEOUT: u64 = 1000;

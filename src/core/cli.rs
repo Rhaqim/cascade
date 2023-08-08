@@ -82,6 +82,9 @@ impl Cli {
         let method = matches.get_one::<String>("method").unwrap_or(&binding);
         let binding = DEFAULT_NODE.to_string();
         let node = matches.get_one::<String>("node").unwrap_or(&binding);
+        let timeout = matches
+            .get_one::<u64>("timeout")
+            .unwrap_or(&DEFAULT_TIMEOUT);
 
         let cli_args = CliArgs {
             address: address.to_string(),
@@ -89,6 +92,7 @@ impl Cli {
             to: to.to_owned(),
             method: method.to_string(),
             node: node.to_string(),
+            timeout: timeout.to_owned(),
         };
 
         run(cli_args).await;

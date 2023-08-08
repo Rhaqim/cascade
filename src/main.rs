@@ -10,7 +10,7 @@ mod utils;
 async fn main() -> web3::Result<()> {
     dotenv::dotenv().ok();
 
-    core::Cli::parse().await;
+    core::cli_main().await;
 
     Ok(())
 }

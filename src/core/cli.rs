@@ -1,7 +1,8 @@
 use crate::config::*;
 use crate::core::{cli_controller::run, CliArgs};
-use clap::{Arg, ArgAction, Command};
+use clap::{Arg, ArgAction, Command, Parser};
 
+#[derive(Debug, Parser)]
 pub struct Cli;
 
 impl Cli {

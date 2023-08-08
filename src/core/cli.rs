@@ -1,5 +1,5 @@
 use crate::config::*;
-use crate::core::{cli_controller::run, CliArgs};
+use crate::core::{run, CliArgs};
 use clap::{Arg, ArgAction, Command, Parser};
 
 #[derive(Debug, Parser)]

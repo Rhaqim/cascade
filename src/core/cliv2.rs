@@ -1,4 +1,4 @@
-use crate::core::cli_controller::run;
+use crate::core::run;
 use clap::Parser;
 
 #[derive(Clone, Debug, Parser)]

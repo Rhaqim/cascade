@@ -62,6 +62,13 @@ impl Cli {
                     .short('r')
                     .action(ArgAction::Set),
             )
+            .arg(
+                Arg::new("timeout")
+                    .help("How long should the test run for in seconds")
+                    .long("timeout")
+                    .short('t')
+                    .action(ArgAction::Set),
+            )
             .get_matches();
 
         let binding = DEFAULT_ADDRESS.to_string();

@@ -4,6 +4,8 @@ pub mod cascade_api {
     use crate::log::Logger;
     use crate::service::http_web3;
     use crate::service::websocket_web3;
+
+    use std::env;
     use web3::types::BlockNumber;
 
     /// The run function is the entry point for testing the Ethereum node
@@ -42,7 +44,7 @@ pub mod cascade_api {
     /// The default test is run when the address is not provided
     /// The default fetches the logs from the node
     async fn run_default_test(args: CliArgs) {
-        let web3_http = http_web3(args.node);
+        let web3_http = http_web3(env::var("NODE").unwrap_or(args.node));
 
         let from_block = BlockNumber::Number(args.from.into());
         let to_block = BlockNumber::Number(args.to.into());

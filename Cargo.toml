@@ -1,5 +1,5 @@
 [package]
-name = "node_tester_cli"
+name = "cascade"
 version = "0.1.0"
 edition = "2021"
 authors = ["Nirvana Labs", "Rhaqim <rhaqim@gmail.com>"]

@@ -1,100 +1,39 @@
-use crate::config::*;
-use crate::core::{run, CliArgs};
-use clap::{Arg, ArgAction, Command, Parser};
+use crate::core::run;
+use clap::Parser;
 
-#[derive(Debug, Parser)]
-pub struct Cli;
+#[derive(Clone, Debug, Parser)]
+#[command(author = "Rhaqim <anusiemj@gmail.com>", version = "0.1")]
+#[command(
+    about = "monster - a simple CLI to test nodes",
+    long_about = "monster is a super CLI tool used to test newly created arbitrium chains. It is a simple CLI tool that can be used to test the functionality of a node."
+)]
+pub struct CliArgs {
+    #[arg(long, short, default_value = "0x0", help = "Address to query")]
+    pub address: String,
+    #[arg(long, short, default_value = "22207815", help = "Start block")]
+    pub from: u64,
+    #[arg(long, short, default_value = "22207915", help = "End block")]
+    pub to: u64,
+    #[arg(long, short, default_value = "logs", help = "Method to run")]
+    pub method: String,
+    #[arg(
+        long,
+        short,
+        default_value = "http://localhost:8545",
+        help = "Node to connect to"
+    )]
+    pub node: String,
+    #[arg(
+        long,
+        short = 'T',
+        default_value = "100",
+        help = "Timeout for the request"
+    )]
+    pub timeout: u64,
+}
 
-impl Cli {
-    pub async fn parse() {
-        let matches = Command::new("monster")
-            .version("0.1.0")
-            .author("Rhaqim <anusiemj@gmail.com>")
-            .about("Ethereum test CLI")
-            .arg(
-                Arg::new("node")
-                    .help("Node to connect to")
-                    .long("node")
-                    .short('n')
-                    .number_of_values(1)
-                    .value_name("NODE")
-                    .required(true),
-            )
-            .arg(
-                Arg::new("address")
-                    .help("Add a contract to the database")
-                    .long("address")
-                    .short('a')
-                    .number_of_values(1)
-                    .value_name("ADDRESS")
-                    .required(false),
-            )
-            .arg(
-                Arg::new("from")
-                    .help("Start indexing from this block")
-                    .long("from")
-                    .short('f')
-                    .number_of_values(1)
-                    .value_name("FROM_BLOCK")
-                    .required(false),
-            )
-            .arg(
-                Arg::new("to")
-                    .help("Stop indexing at this block")
-                    .long("to")
-                    .short('t')
-                    .number_of_values(1)
-                    .value_name("TO_BLOCK")
-                    .required(false),
-            )
-            .arg(
-                Arg::new("method")
-                    .help("Method to run")
-                    .long("method")
-                    .short('m')
-                    .number_of_values(1)
-                    .value_name("METHOD")
-                    .required(false),
-            )
-            .arg(
-                Arg::new("run")
-                    .help("Run the indexer")
-                    .long("run")
-                    .short('r')
-                    .action(ArgAction::Set),
-            )
-            .arg(
-                Arg::new("timeout")
-                    .help("How long should the test run for in seconds")
-                    .long("timeout")
-                    .short('t')
-                    .action(ArgAction::Set),
-            )
-            .get_matches();
+pub async fn cli_main() {
+    let cli = CliArgs::parse();
 
-        let binding = DEFAULT_ADDRESS.to_string();
-        let address = matches.get_one::<String>("address").unwrap_or(&binding);
-        let from = matches
-            .get_one::<u64>("from")
-            .unwrap_or(&DEFAULT_FROM_BLOCK);
-        let to = matches.get_one::<u64>("to").unwrap_or(&DEFAULT_TO_BLOCK);
-        let binding = DEFAULT_METHOD.to_string();
-        let method = matches.get_one::<String>("method").unwrap_or(&binding);
-        let binding = DEFAULT_NODE.to_string();
-        let node = matches.get_one::<String>("node").unwrap_or(&binding);
-        let timeout = matches
-            .get_one::<u64>("timeout")
-            .unwrap_or(&DEFAULT_TIMEOUT);
-
-        let cli_args = CliArgs {
-            address: address.to_string(),
-            from: from.to_owned(),
-            to: to.to_owned(),
-            method: method.to_string(),
-            node: node.to_string(),
-            timeout: timeout.to_owned(),
-        };
-
-        run(cli_args).await;
-    }
+    run(cli).await;
 }

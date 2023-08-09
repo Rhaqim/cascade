@@ -30,6 +30,13 @@ pub struct CliArgs {
         help = "Timeout for the request"
     )]
     pub timeout: u64,
+    #[arg(
+        long,
+        short = 'p',
+        default_value = "[]",
+        help = "Params for the request"
+    )]
+    pub params: String,
 }
 
 pub async fn cli_main() {

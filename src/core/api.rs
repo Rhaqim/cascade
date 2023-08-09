@@ -7,6 +7,7 @@ pub mod cascade_api {
 
     use std::env;
     use web3::types::BlockNumber;
+    use web3::Transport;
 
     /// The run function is the entry point for testing the Ethereum node
     /// The node is provided as a command line argument or if absent, the default node is used
@@ -36,8 +37,10 @@ pub mod cascade_api {
     /// It uses the HTTP transport to connect to the node
     async fn run_http_test(args: CliArgs) {
         if is_default_address(args.address.as_str()) {
-            run_default_test(args).await;
+            run_default_test(args.clone()).await;
         }
+
+        run_with_query(args).await;
     }
 
     /// The is_default_address function checks if the address is the default address
@@ -71,5 +74,30 @@ pub mod cascade_api {
         };
 
         log.info(&format!("Logs length: {:?}", logs.len()));
+    }
+
+    async fn run_with_query(args: CliArgs) {
+        let web3_http = http_web3(env::var("NODE").unwrap_or(args.node));
+
+        let transport = web3_http.transport();
+
+        let params_serde: String;
+
+        if args.params == "[]" {
+            params_serde = serde_json::from_str(&args.params).unwrap();
+        } else {
+            params_serde = args.params;
+        }
+
+        let get_logs = transport
+            .execute(&args.method, vec![params_serde.into(), false.into()])
+            .await
+            .unwrap();
+
+        let log = Logger {
+            scope: "run_with_query".to_string(),
+        };
+
+        log.info(&format!("Logs length: {:?}", get_logs));
     }
 }

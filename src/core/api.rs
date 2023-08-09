@@ -6,8 +6,10 @@ pub mod cascade_api {
     use crate::service::websocket_web3;
 
     use std::env;
+    use web3::transports::Http;
     use web3::types::BlockNumber;
     use web3::Transport;
+    use web3::Web3;
 
     /// The run function is the entry point for testing the Ethereum node
     /// The node is provided as a command line argument or if absent, the default node is used
@@ -36,11 +38,13 @@ pub mod cascade_api {
     /// The run_http_test function is the entry point for testing the Ethereum node
     /// It uses the HTTP transport to connect to the node
     async fn run_http_test(args: CliArgs) {
+        let web3_http = http_web3(env::var("NODE").unwrap_or(args.node.clone()));
+
         if is_default_address(args.address.as_str()) {
-            run_default_test(args.clone()).await;
+            run_default_test(&web3_http, args.clone()).await;
         }
 
-        run_with_query(args).await;
+        run_with_query(&web3_http, args).await;
     }
 
     /// The is_default_address function checks if the address is the default address
@@ -52,9 +56,7 @@ pub mod cascade_api {
 
     /// The default test is run when the address is not provided
     /// The default fetches the logs from the node
-    async fn run_default_test(args: CliArgs) {
-        let web3_http = http_web3(env::var("NODE").unwrap_or(args.node));
-
+    async fn run_default_test(web3_http: &Web3<Http>, args: CliArgs) {
         let from_block = BlockNumber::Number(args.from.into());
         let to_block = BlockNumber::Number(args.to.into());
 
@@ -73,11 +75,17 @@ pub mod cascade_api {
             scope: "run_default_test".to_string(),
         };
 
-        log.info(&format!("Logs length: {:?}", logs.len()));
+        // log.info(&format!("Logs length: {:?}", logs.len()));
+
+        if args.method == "logs" {
+            log.info(&format!("Logs length: {:?}", logs.len()));
+        } else {
+            run_with_query(&web3_http, args).await;
+        }
     }
 
-    async fn run_with_query(args: CliArgs) {
-        let web3_http = http_web3(env::var("NODE").unwrap_or(args.node));
+    async fn run_with_query(web3_http: &Web3<Http>, args: CliArgs) {
+        // let web3_http = http_web3(env::var("NODE").unwrap_or(args.node));
 
         let transport = web3_http.transport();
 

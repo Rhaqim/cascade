@@ -10,7 +10,7 @@ pub mod cascade_api {
 
     /// The run function is the entry point for testing the Ethereum node
     /// The node is provided as a command line argument or if absent, the default node is used
-    /// If the node is present, the is_websocket flag is set to true
+    /// If the node is present, it checks if the node is a websocket or http node
     pub async fn run(args: CliArgs) {
         if is_websocket(args.node.as_str()) {
             run_websocket_test(args).await;
@@ -19,6 +19,9 @@ pub mod cascade_api {
         }
     }
 
+    /// The is_websocket function checks if the node is a websocket node
+    /// It checks if the node starts with ws:// or wss://
+    /// If it does, it returns true, else false
     fn is_websocket(node: &str) -> bool {
         node.starts_with("ws://") || node.starts_with("wss://")
     }
@@ -37,6 +40,9 @@ pub mod cascade_api {
         }
     }
 
+    /// The is_default_address function checks if the address is the default address
+    /// The default address is 0x0, which is default for the cli
+    /// If the address is 0x0, it returns true, else false
     fn is_default_address(address: &str) -> bool {
         address == "0x0"
     }

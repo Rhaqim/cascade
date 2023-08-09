@@ -1,11 +1,14 @@
 pub mod cascade_api {
     use crate::core::CliArgs;
+
     use crate::log::CliLog;
     use crate::log::Logger;
+
     use crate::service::http_web3;
     use crate::service::websocket_web3;
 
     use std::env;
+
     use web3::transports::Http;
     use web3::types::BlockNumber;
     use web3::Transport;

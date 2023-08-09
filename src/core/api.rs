@@ -44,7 +44,7 @@ pub mod cascade_api {
             run_default_test(&web3_http, args.clone()).await;
         }
 
-        run_with_query(&web3_http, args).await;
+        run_with_query_http(&web3_http, args).await;
     }
 
     /// The is_default_address function checks if the address is the default address
@@ -75,18 +75,14 @@ pub mod cascade_api {
             scope: "run_default_test".to_string(),
         };
 
-        // log.info(&format!("Logs length: {:?}", logs.len()));
-
         if args.method == "logs" {
             log.info(&format!("Logs length: {:?}", logs.len()));
         } else {
-            run_with_query(&web3_http, args).await;
+            run_with_query_http(&web3_http, args).await;
         }
     }
 
-    async fn run_with_query(web3_http: &Web3<Http>, args: CliArgs) {
-        // let web3_http = http_web3(env::var("NODE").unwrap_or(args.node));
-
+    async fn run_with_query_http(web3_http: &Web3<Http>, args: CliArgs) {
         let transport = web3_http.transport();
 
         let params_serde: String;

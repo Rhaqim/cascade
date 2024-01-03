@@ -5,8 +5,8 @@ use clap::{Args, Parser, Subcommand};
 #[derive(Parser, Debug)]
 #[command(author = "Rhaqim <anusiemj@gmail.com>", version = "0.1")]
 #[command(
-    about = "monster - a simple CLI to test nodes",
-    long_about = "monster is a simple, super CLI tool for testing arbitrium chains and functions on the nodes."
+    about = "cascade - a simple CLI to test nodes",
+    long_about = "cascade is a simple, super CLI tool for testing arbitrium chains and functions on the nodes."
 )]
 pub struct Cli {
     #[clap(subcommand)]

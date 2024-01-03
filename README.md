@@ -19,6 +19,12 @@ This is a simple script to test a provided Ethereum node. It will run a series o
 - `--method` - The method to use for the tests
 - `--data` - The data to use for the tests
 
+## commands
+
+- `--init` - Initialise the CLI with the provided node URL
+- `--test` - Run the tests with the provided parameters
+- `--test-all` - Run all tests with the provided parameters
+
 ## Example
 
 ### Run Test with default parameters
@@ -36,8 +42,14 @@ This test will use the default parameters of:
 - `--method eth_getLogs`
 - `--data 0x1234567890123456789012345678901234567890`
 
+### Initialise CLI with node
+
+```bash
+cargo run -- --init --node https://mainnet.infura.io/v3/1234567890
+```
+
 ### Run Test with custom parameters
 
 ```bash
-cargo run -- --node https://mainnet.infura.io/v3/1234567890 --timeout 10 --verbose --address 0x1234567890123456789012345678901234567890 --method eth_getBalance --data 0x1234567890123456789012345678901234567890
+cargo run -- --timeout 10 --verbose --address 0x1234567890123456789012345678901234567890 --method eth_getBalance --data 0x1234567890123456789012345678901234567890
 ```

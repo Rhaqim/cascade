@@ -1,4 +1,4 @@
-use crate::core::{run, initialise_cli};
+use crate::core::{initialise_cli, run, test_node};
 
 use clap::{Args, Parser, Subcommand};
 
@@ -23,6 +23,9 @@ pub enum Commands {
 
     #[command(about = "Run the CLI")]
     Run(CliArgs),
+
+    #[command(about = "Test node connection")]
+    Test(TestArgs),
 }
 
 #[derive(Clone, Debug, Args)]
@@ -62,16 +65,21 @@ pub struct CliArgs {
     pub params: String,
 }
 
+#[derive(Clone, Debug, Args)]
+pub struct TestArgs {}
+
 pub async fn cli_main() {
     let cli = Cli::parse();
 
-    // run(cli).await;
     match cli.command {
         Commands::Init(args) => {
             initialise_cli(args).await;
         }
         Commands::Run(args) => {
             run(args).await;
+        }
+        Commands::Test(_) => {
+            test_node().await;
         }
     }
 }

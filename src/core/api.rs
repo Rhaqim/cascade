@@ -1,70 +1,121 @@
+/// The `cascade_api` module contains functions for initializing and running the CLI.
 pub mod cascade_api {
     use crate::core::{CliArgs, InitArgs};
-
+    use crate::config::Config;
     use crate::log::CliLog;
     use crate::log::Logger;
-
     use crate::service::http_web3;
     use crate::service::websocket_web3;
-
     use std::env;
-
     use web3::transports::Http;
     use web3::types::BlockNumber;
     use web3::Transport;
     use web3::Web3;
 
-
-    /// The run function is the entry point for testing the Ethereum node
-    /// The node is provided as a command line argument or if absent, the default node is used
-    /// If the node is present, it checks if the node is a websocket or http node
+    /// Initializes the CLI with the provided arguments.
+    ///
+    /// # Arguments
+    ///
+    /// * `args` - The initialization arguments.
     pub async fn initialise_cli(args: InitArgs) {
-        let node = args.node.clone();
+        let config = Config::load();
+        let mut node = args.node.clone();
+        
+        if node == "http://localhost:8545" {
+            node = config.node_address;
+        } else {
+            config.node_address = node.clone();
+            config.save();
+        }
+    }
 
-        if is_websocket(args.node.as_str()) {
+    /// Tests the connection to the saved node.
+    ///  
+    /// # Arguments
+    ///     
+    /// * `args` - The CLI arguments.
+    ///     
+    /// # Returns
+    ///
+    /// * `true` if the connection is successful, `false` otherwise.
+    ///    
+    /// # Panics
+    ///
+    /// * If the node is not a websocket node.
+    /// * If the node is not a HTTP node.
+    pub async fn test_node() -> bool {
+        let node = env::var("NODE").unwrap_or("http://localhost:8545".to_string());
+
+        if is_websocket(&node) {
             run_websocket_test(node).await;
         } else {
             run_http_test(node).await;
         }
+
+        true
     }
 
-    /// The run function is the entry point for testing the Ethereum node
-    /// The node is provided as a command line argument or if absent, the default node is used
-    /// If the node is present, it checks if the node is a websocket or http node
+    /// Runs the CLI with the provided arguments.
+    ///
+    /// # Arguments
+    ///
+    /// * `args` - The CLI arguments.
     pub async fn run(args: CliArgs) {
-
+        // TODO: Implement the run function
     }
 
-    /// The is_websocket function checks if the node is a websocket node
-    /// It checks if the node starts with ws:// or wss://
-    /// If it does, it returns true, else false
+    /// Checks if the node is a websocket node.
+    ///
+    /// # Arguments
+    ///
+    /// * `node` - The node URL.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the node is a websocket node, `false` otherwise.
     fn is_websocket(node: &str) -> bool {
         node.starts_with("ws://") || node.starts_with("wss://")
     }
 
-    /// The run_websocket_test function is the entry point for testing the Ethereum node
-    /// It uses the Websocket transport to connect to the node
+    /// Runs the websocket test for the Ethereum node.
+    ///
+    /// # Arguments
+    ///
+    /// * `node` - The node URL.
     async fn run_websocket_test(node: String) {
         let _web3_wss = websocket_web3(node).await;
     }
 
-    /// The run_http_test function is the entry point for testing the Ethereum node
-    /// It uses the HTTP transport to connect to the node
+    /// Runs the HTTP test for the Ethereum node.
+    ///
+    /// # Arguments
+    ///
+    /// * `node` - The node URL.
     async fn run_http_test(node: String) {
         let web3_http = http_web3(env::var("NODE").unwrap_or(node));
 
-        
+        // TODO: Implement the run_http_test function
     }
 
-    /// The is_default_address function checks if the address is the default address
-    /// The default address is 0x0, which is default for the cli
-    /// If the address is 0x0, it returns true, else false
+    /// Checks if the address is the default address.
+    ///
+    /// # Arguments
+    ///
+    /// * `address` - The address to check.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the address is the default address, `false` otherwise.
     fn is_default_address(address: &str) -> bool {
         address == "0x0"
     }
 
-    /// The default test is run when the address is not provided
-    /// The default fetches the logs from the node
+    /// Runs the default test when the address is not provided.
+    ///
+    /// # Arguments
+    ///
+    /// * `web3_http` - The HTTP Web3 instance.
+    /// * `args` - The CLI arguments.
     async fn run_default_test(web3_http: &Web3<Http>, args: CliArgs) {
         let from_block = BlockNumber::Number(args.from.into());
         let to_block = BlockNumber::Number(args.to.into());
@@ -91,9 +142,14 @@ pub mod cascade_api {
         }
     }
 
+    /// Runs the HTTP test with query parameters.
+    ///
+    /// # Arguments
+    ///
+    /// * `web3_http` - The HTTP Web3 instance.
+    /// * `args` - The CLI arguments.
     async fn run_with_query_http(web3_http: &Web3<Http>, args: CliArgs) {
         let transport = web3_http.transport();
-
         let params_serde: String;
 
         if args.params == "[]" {

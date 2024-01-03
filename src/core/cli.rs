@@ -6,7 +6,7 @@ use clap::Parser;
 #[command(author = "Rhaqim <anusiemj@gmail.com>", version = "0.1")]
 #[command(
     about = "monster - a simple CLI to test nodes",
-    long_about = "monster is a super CLI tool used to test newly created arbitrium chains. It is a simple CLI tool that can be used to test the functionality of a node."
+    long_about = "monster is a simple, super CLI tool for testing arbitrium chains and functions on the nodes."
 )]
 pub struct CliArgs {
     #[arg(long, short, default_value = "0x0", help = "Address to query")]

@@ -1,4 +1,4 @@
-use crate::core::{initialise_cli, run, test_node};
+use crate::core::{initialise_cli, run, test_cli_node};
 
 use clap::{Args, Parser, Subcommand};
 
@@ -74,7 +74,7 @@ pub async fn cli_main() {
             run(args).await;
         }
         Commands::Test(_) => {
-            test_node().await;
+            test_cli_node().await;
         }
     }
 }

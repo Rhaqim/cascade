@@ -15,7 +15,7 @@ pub mod cascade_api {
     /// Initializes the CLI with the provided arguments.
     ///
     /// Uses the `Config` struct to save the node address.
-    /// 
+    ///
     /// # Arguments
     ///
     /// * `args` - The initialization arguments.
@@ -40,16 +40,23 @@ pub mod cascade_api {
     ///
     /// * If the node is not a websocket node.
     /// * If the node is not a HTTP node.
-    pub async fn test_node() -> bool {
+    pub async fn test_cli_node() {
         let node = Config::load().node_address;
+
+        if node.is_empty() {
+            let log = Logger {
+                scope: "cascade".to_string(),
+            };
+
+            log.error("Node address not initialized. Use 'init' command to set the node.");
+            return;
+        }
 
         if is_websocket(&node) {
             run_websocket_test(node).await;
         } else {
             run_http_test(node).await;
         }
-
-        true
     }
 
     /// Runs the CLI with the provided arguments.

@@ -1,7 +1,7 @@
+use serde::{Deserialize, Serialize};
 use std::env;
 use std::fs;
 use toml;
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
@@ -9,20 +9,20 @@ pub struct Config {
 }
 
 /// Represents a configuration for the node_tester_cli application.
-/// 
+///
 /// The `Config` struct provides methods for creating, loading, and saving configurations.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// use node_tester_cli::config::Config;
-/// 
+///
 /// // Create a new configuration
 /// let config = Config::new();
-/// 
+///
 /// // Load a configuration from file
 /// let loaded_config = Config::load();
-/// 
+///
 /// // Save the current configuration to file
 /// config.save();
 /// ```

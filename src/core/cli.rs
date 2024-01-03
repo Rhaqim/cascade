@@ -25,7 +25,7 @@ pub enum Commands {
     Run(CliArgs),
 
     #[command(about = "Test node connection")]
-    Test(TestArgs),
+    Test(CliArgs),
 }
 
 #[derive(Clone, Debug, Args)]
@@ -60,9 +60,6 @@ pub struct CliArgs {
     pub params: String,
 }
 
-#[derive(Clone, Debug, Args)]
-pub struct TestArgs {}
-
 pub async fn cli_main() {
     let cli = Cli::parse();
 
@@ -73,8 +70,8 @@ pub async fn cli_main() {
         Commands::Run(args) => {
             run(args).await;
         }
-        Commands::Test(_) => {
-            test_cli_node().await;
+        Commands::Test(args) => {
+            test_cli_node(args).await;
         }
     }
 }

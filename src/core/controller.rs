@@ -172,7 +172,7 @@ pub mod cli_controller {
 
     pub async fn run(args: CliArgs) {
         // check if node is websocket or http
-        let node = args.node.clone();
+        let node = "http://localhost:8545".to_string();
         let is_websocket = node.starts_with("wss://") || node.starts_with("ws://");
 
         // create web3 instance

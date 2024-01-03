@@ -1,13 +1,42 @@
-use crate::core::run;
+use crate::core::{run, initialise_cli};
 
-use clap::Parser;
+use clap::{Args, Parser, Subcommand};
 
-#[derive(Clone, Debug, Parser)]
+#[derive(Parser, Debug)]
 #[command(author = "Rhaqim <anusiemj@gmail.com>", version = "0.1")]
 #[command(
     about = "monster - a simple CLI to test nodes",
     long_about = "monster is a simple, super CLI tool for testing arbitrium chains and functions on the nodes."
 )]
+pub struct Cli {
+    #[clap(subcommand)]
+    pub command: Commands,
+
+    #[clap(flatten)]
+    pub args: CliArgs,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum Commands {
+    #[command(about = "Initialize the CLI")]
+    Init(InitArgs),
+
+    #[command(about = "Run the CLI")]
+    Run(CliArgs),
+}
+
+#[derive(Clone, Debug, Args)]
+pub struct InitArgs {
+    #[arg(
+        long,
+        short,
+        default_value = "http://localhost:8545",
+        help = "Node to connect to"
+    )]
+    pub node: String,
+}
+
+#[derive(Clone, Debug, Args)]
 pub struct CliArgs {
     #[arg(long, short, default_value = "0x0", help = "Address to query")]
     pub address: String,
@@ -17,13 +46,6 @@ pub struct CliArgs {
     pub to: u64,
     #[arg(long, short, default_value = "logs", help = "Method to run")]
     pub method: String,
-    #[arg(
-        long,
-        short,
-        default_value = "http://localhost:8545",
-        help = "Node to connect to"
-    )]
-    pub node: String,
     #[arg(
         long,
         short = 'T',
@@ -41,7 +63,15 @@ pub struct CliArgs {
 }
 
 pub async fn cli_main() {
-    let cli = CliArgs::parse();
+    let cli = Cli::parse();
 
-    run(cli).await;
+    // run(cli).await;
+    match cli.command {
+        Commands::Init(args) => {
+            initialise_cli(args).await;
+        }
+        Commands::Run(args) => {
+            run(args).await;
+        }
+    }
 }

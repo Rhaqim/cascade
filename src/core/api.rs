@@ -1,5 +1,5 @@
 pub mod cascade_api {
-    use crate::core::CliArgs;
+    use crate::core::{CliArgs, InitArgs};
 
     use crate::log::CliLog;
     use crate::log::Logger;
@@ -14,15 +14,25 @@ pub mod cascade_api {
     use web3::Transport;
     use web3::Web3;
 
+
+    /// The run function is the entry point for testing the Ethereum node
+    /// The node is provided as a command line argument or if absent, the default node is used
+    /// If the node is present, it checks if the node is a websocket or http node
+    pub async fn initialise_cli(args: InitArgs) {
+        let node = args.node.clone();
+
+        if is_websocket(args.node.as_str()) {
+            run_websocket_test(node).await;
+        } else {
+            run_http_test(node).await;
+        }
+    }
+
     /// The run function is the entry point for testing the Ethereum node
     /// The node is provided as a command line argument or if absent, the default node is used
     /// If the node is present, it checks if the node is a websocket or http node
     pub async fn run(args: CliArgs) {
-        if is_websocket(args.node.as_str()) {
-            run_websocket_test(args).await;
-        } else {
-            run_http_test(args).await;
-        }
+
     }
 
     /// The is_websocket function checks if the node is a websocket node
@@ -34,20 +44,16 @@ pub mod cascade_api {
 
     /// The run_websocket_test function is the entry point for testing the Ethereum node
     /// It uses the Websocket transport to connect to the node
-    async fn run_websocket_test(args: CliArgs) {
-        let _web3_wss = websocket_web3(args.node).await;
+    async fn run_websocket_test(node: String) {
+        let _web3_wss = websocket_web3(node).await;
     }
 
     /// The run_http_test function is the entry point for testing the Ethereum node
     /// It uses the HTTP transport to connect to the node
-    async fn run_http_test(args: CliArgs) {
-        let web3_http = http_web3(env::var("NODE").unwrap_or(args.node.clone()));
+    async fn run_http_test(node: String) {
+        let web3_http = http_web3(env::var("NODE").unwrap_or(node));
 
-        if is_default_address(args.address.as_str()) {
-            run_default_test(&web3_http, args.clone()).await;
-        }
-
-        run_with_query_http(&web3_http, args).await;
+        
     }
 
     /// The is_default_address function checks if the address is the default address

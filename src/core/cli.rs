@@ -30,12 +30,7 @@ pub enum Commands {
 
 #[derive(Clone, Debug, Args)]
 pub struct InitArgs {
-    #[arg(
-        long,
-        short,
-        default_value = "http://localhost:8545",
-        help = "Node to connect to"
-    )]
+    #[arg(long, short, help = "Node to connect to")]
     pub node: String,
 }
 

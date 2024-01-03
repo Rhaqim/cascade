@@ -1,7 +1,7 @@
 /// The `cascade_api` module contains functions for initializing and running the CLI.
 pub mod cascade_api {
-    use crate::core::{CliArgs, InitArgs};
     use crate::config::Config;
+    use crate::core::{CliArgs, InitArgs};
     use crate::log::CliLog;
     use crate::log::Logger;
     use crate::service::http_web3;
@@ -14,19 +14,16 @@ pub mod cascade_api {
 
     /// Initializes the CLI with the provided arguments.
     ///
+    /// Uses the `Config` struct to save the node address.
+    /// 
     /// # Arguments
     ///
     /// * `args` - The initialization arguments.
     pub async fn initialise_cli(args: InitArgs) {
-        let config = Config::load();
-        let mut node = args.node.clone();
-        
-        if node == "http://localhost:8545" {
-            node = config.node_address;
-        } else {
-            config.node_address = node.clone();
-            config.save();
-        }
+        let mut config = Config::new();
+
+        config.node_address = args.node.clone();
+        config.save();
     }
 
     /// Tests the connection to the saved node.
@@ -44,7 +41,7 @@ pub mod cascade_api {
     /// * If the node is not a websocket node.
     /// * If the node is not a HTTP node.
     pub async fn test_node() -> bool {
-        let node = env::var("NODE").unwrap_or("http://localhost:8545".to_string());
+        let node = Config::load().node_address;
 
         if is_websocket(&node) {
             run_websocket_test(node).await;

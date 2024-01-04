@@ -1,12 +1,18 @@
-# Ethereum CLI node tester
+# Cascade - CLI Node tester
 
-This is a simple script to test a provided Ethereum node. It will run a series of tests and output the results to the console.
+Cascade is a versatile script designed to assess the functionality of a provided Ethereum node. This script executes a series of tests and reports the results on the console.
 
-## Usage
+## Installation
+```bash
+git clone https://github.com/rhaqim/cascade.git && cd cascade && ./install.sh
+```
 
-1. Clone this repository
-2. Run `cargo build`
-3. Run `cargo run -- --help` to see the available options
+### Initialise CLI with node
+After installing the script,  run the following command to set the node URL:
+
+```bash
+cascade --init --node <node_url>
+```
 
 ## parameters
 
@@ -22,31 +28,25 @@ This is a simple script to test a provided Ethereum node. It will run a series o
 ## commands
 
 - `--init` - Initialise the CLI with the provided node URL
-- `--test` - Run the tests with the provided parameters
-- `--test-all` - Run all tests with the provided parameters
+- `--run` - Run the tests with the provided parameters
+- `--test` - Test the connection to the provided node URL
 
 ## Example
 
 ### Run Test with default parameters
 
 ```bash
-cargo run
+cascade --test
 ```
 
 This test will use the default parameters of:
 
-- `--node http://localhost:8545`
 - `--timeout 10`
 - `--verbose false`
 - `--address 0x1234567890123456789012345678901234567890`
 - `--method eth_getLogs`
 - `--data 0x1234567890123456789012345678901234567890`
 
-### Initialise CLI with node
-
-```bash
-cargo run -- --init --node https://mainnet.infura.io/v3/1234567890
-```
 
 ### Run Test with custom parameters
 

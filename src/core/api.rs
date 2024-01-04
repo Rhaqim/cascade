@@ -4,6 +4,7 @@ pub mod cascade_api {
     use crate::core::{CliArgs, InitArgs};
     use crate::log::CliLog;
     use crate::log::Logger;
+    use crate::report::{Report, ReportData, ReportHeader};
     use crate::service::http_web3;
     use web3::transports::Http;
     use web3::types::BlockNumber;
@@ -121,6 +122,11 @@ pub mod cascade_api {
         let transport = web3_http.transport();
         let params_serde: String;
 
+        let header = ReportHeader {
+            node: "node".to_string(),
+            args: args.clone(),
+        };
+
         if args.params == "[]" {
             params_serde = serde_json::from_str(&args.params).unwrap();
         } else {
@@ -129,13 +135,37 @@ pub mod cascade_api {
 
         let get_logs = transport
             .execute(&args.method, vec![params_serde.into(), false.into()])
-            .await
-            .unwrap();
+            .await;
 
-        let log = Logger {
-            scope: "run_with_query".to_string(),
-        };
+        match get_logs {
+            Ok(logs) => {
+                // let log = Logger {
+                //     scope: "run_with_query".to_string(),
+                // };
 
-        log.info(&format!("Logs length: {:?}", get_logs));
+                // log.info(&format!("Logs length: {:?}", logs));
+
+                let data = [ReportData {
+                    success: true,
+                    error: None,
+                    duration: 0,
+                    result: Some(format!("{:?}", logs)),
+                }]
+                .to_vec();
+
+                let mut report = Report::new(header);
+
+                report.add_data(data[0].clone());
+
+                report.display();
+            }
+            Err(e) => {
+                let log = Logger {
+                    scope: "run_with_query".to_string(),
+                };
+
+                log.error(&format!("Error: {:?}", e));
+            }
+        }
     }
 }

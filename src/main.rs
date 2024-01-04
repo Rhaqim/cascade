@@ -3,6 +3,7 @@ extern crate tokio;
 mod config;
 mod core;
 mod log;
+mod report;
 mod service;
 mod utils;
 

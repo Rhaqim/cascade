@@ -7,7 +7,7 @@ pub mod connect {
     use super::*;
 
     pub fn http_web3(node_url: String) -> Web3<Http> {
-        let http = Http::new(&node_url).unwrap();
+        let http = Http::new(&node_url).unwrap_or_else(|_| panic!("Could not connect to node: {}", node_url));
 
         Web3::new(http)
     }

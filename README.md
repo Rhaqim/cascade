@@ -1,6 +1,6 @@
 # Cascade - CLI Node tester
 
-Cascade is a versatile script designed to assess the functionality of a provided Ethereum node. This script executes a series of tests and reports the results on the console.
+Cascade is a versatile script designed to assess the functionality of a provided Ethereum node. This script executes a series of tests and reports the results on the console. This CLI is designed to be used with linux systems.
 
 ## Installation
 ```bash

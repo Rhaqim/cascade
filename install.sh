@@ -9,9 +9,6 @@ if ! command -v cargo &> /dev/null; then
     source $HOME/.cargo/env
 fi
 
-# Install the Rust CLI dependencies
-# Add your dependencies here
-
 # Check if necessary environment variables are set
 # if [ -z "$NODE_ADDRESS" ]; then
 #     read -p "Enter the Node Address: " NODE_ADDRESS

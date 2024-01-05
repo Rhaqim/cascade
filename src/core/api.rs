@@ -120,50 +120,46 @@ pub mod cascade_api {
     /// * `args` - The CLI arguments.
     async fn run_with_query_http(web3_http: &Web3<Http>, args: CliArgs) {
         let transport = web3_http.transport();
-        let params_serde: String;
 
         let header = ReportHeader {
             node: "node".to_string(),
             args: args.clone(),
         };
 
-        if args.params == "[]" {
-            params_serde = serde_json::from_str(&args.params).unwrap();
-        } else {
-            params_serde = args.params;
-        }
+        print!("Running with query parameters: {:?}", args.params);
 
-        let get_logs = transport
-            .execute(&args.method, vec![params_serde.into(), false.into()])
-            .await;
+        // let params_serde = vec![helpers::serialize(&args.params)];
+        let params_serde = vec![serde_json::json!({
+            "fromBlock": args.from,
+            "toBlock": args.to,
+            "address": format!("0x{}", args.address),
+        })];
+
+        let get_logs = transport.execute(&args.method, params_serde).await;
+
+        let log = Logger {
+            scope: "run_with_query".to_string(),
+        };
 
         match get_logs {
             Ok(logs) => {
-                // let log = Logger {
-                //     scope: "run_with_query".to_string(),
-                // };
+                log.info(&format!("Logs length: {:?}", logs));
 
-                // log.info(&format!("Logs length: {:?}", logs));
+                // let data = [ReportData {
+                //     success: true,
+                //     error: None,
+                //     duration: 0,
+                //     result: Some(format!("{:?}", logs)),
+                // }]
+                // .to_vec();
 
-                let data = [ReportData {
-                    success: true,
-                    error: None,
-                    duration: 0,
-                    result: Some(format!("{:?}", logs)),
-                }]
-                .to_vec();
+                // let mut report = Report::new(header);
 
-                let mut report = Report::new(header);
+                // report.add_data(data[0].clone());
 
-                report.add_data(data[0].clone());
-
-                report.display();
+                // report.display();
             }
             Err(e) => {
-                let log = Logger {
-                    scope: "run_with_query".to_string(),
-                };
-
                 log.error(&format!("Error: {:?}", e));
             }
         }

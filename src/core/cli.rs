@@ -2,6 +2,7 @@ pub mod cascade_cli {
     use crate::core::{initialise_cli, run, test_cli_node};
 
     use clap::{Args, Parser, Subcommand};
+    use serde::Serialize;
 
     #[derive(Parser, Debug)]
     #[command(author = "Rhaqim <anusiemj@gmail.com>", version = "0.1")]
@@ -35,15 +36,35 @@ pub mod cascade_cli {
         pub node: String,
     }
 
-    #[derive(Clone, Debug, Args)]
+    #[derive(Clone, Debug, Args, Serialize)]
     pub struct CliArgs {
-        #[arg(long, short, default_value = "0x0", help = "Address to query")]
+        #[arg(long, short, default_value = "", help = "Address to query")]
+        #[serde(rename = "address", skip_serializing_if = "String::is_empty")]
         pub address: String,
-        #[arg(long, short, default_value = "22207815", help = "Start block")]
+
+        #[arg(long, short, default_value = "302366", help = "Start block")]
+        #[serde(rename = "fromBlock")]
         pub from: u64,
-        #[arg(long, short, default_value = "22207915", help = "End block")]
+
+        #[arg(long, short, default_value = "303366", help = "End block")]
+        #[serde(rename = "toBlock")]
         pub to: u64,
-        #[arg(long, short, default_value = "logs", help = "Method to run")]
+
+        #[arg(
+            long,
+            short = 'p',
+            default_value = "0x49d1e",
+            help = "Params for the request"
+        )]
+        #[serde(rename = "params")]
+        pub params: String,
+
+        #[arg(
+            long,
+            short,
+            default_value = "debug_traceBlockByNumber",
+            help = "Method to run"
+        )]
         pub method: String,
         #[arg(
             long,
@@ -52,13 +73,6 @@ pub mod cascade_cli {
             help = "Timeout for the request"
         )]
         pub timeout: u64,
-        #[arg(
-            long,
-            short = 'p',
-            default_value = "[]",
-            help = "Params for the request"
-        )]
-        pub params: String,
     }
 
     pub async fn cli_main() {

@@ -217,6 +217,7 @@ dependencies = [
  "encoding_rs",
  "hex",
  "job_scheduler",
+ "jsonrpc-core",
  "lazy_static",
  "postgres",
  "prettytable-rs",

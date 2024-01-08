@@ -68,3 +68,111 @@ impl CliLog for Logger {
         logger("trace", &msg);
     }
 }
+
+#[macro_export]
+/// Macro for logging a warning message.
+///
+/// This macro takes a format string and arguments, and logs a warning message using the `logger` function from the `log` module.
+/// The format string and arguments are passed to the `format!` macro to create the final log message.
+///
+/// # Examples
+///
+/// ```
+/// info!("Invalid input: {}", input);
+/// ```
+macro_rules! info {
+    ($($arg:tt)*) => ({
+        $crate::log::logger("info", &format!($($arg)*));
+    })
+}
+
+#[macro_export]
+/// Macro for logging a warning message.
+///
+/// This macro takes a format string and arguments, and logs a warning message using the `logger` function from the `log` module.
+/// The format string and arguments are passed to the `format!` macro to create the final log message.
+///
+/// # Examples
+///
+/// ```
+/// error!("Invalid input: {}", input);
+/// ```
+macro_rules! error {
+    ($($arg:tt)*) => ({
+        $crate::log::logger("error", &format!($($arg)*));
+    })
+}
+
+#[macro_export]
+/// Macro for logging a warning message.
+///
+/// This macro takes a format string and arguments, and logs a warning message using the `logger` function from the `log` module.
+/// The format string and arguments are passed to the `format!` macro to create the final log message.
+///
+/// # Examples
+///
+/// ```
+/// warning!("Invalid input: {}", input);
+/// ```
+macro_rules! warning {
+    ($($arg:tt)*) => ({
+        $crate::log::logger("warning", &format!($($arg)*));
+    })
+}
+
+#[macro_export]
+/// Macro for logging a warning message.
+///
+/// This macro takes a format string and arguments, and logs a warning message using the `logger` function from the `log` module.
+/// The format string and arguments are passed to the `format!` macro to create the final log message.
+///
+/// # Examples
+///
+/// ```
+/// debug!("Invalid input: {}", input);
+/// ```
+macro_rules! debug {
+    ($($arg:tt)*) => ({
+        $crate::log::logger("debug", &format!($($arg)*));
+    })
+}
+
+#[macro_export]
+/// Macro for logging a warning message.
+///
+/// This macro takes a format string and arguments, and logs a warning message using the `logger` function from the `log` module.
+/// The format string and arguments are passed to the `format!` macro to create the final log message.
+///
+/// # Examples
+///
+/// ```
+/// trace!("Invalid input: {}", input);
+/// ```
+macro_rules! trace {
+    ($($arg:tt)*) => ({
+        $crate::log::logger("trace", &format!($($arg)*));
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_logger() {
+        logger("info", "test");
+        logger("error", "test");
+        logger("warning", "test");
+        logger("debug", "test");
+        logger("trace", "test");
+    }
+
+    #[test]
+    fn test_logger_macro() {
+        info!("test");
+        error!("test");
+        warning!("test");
+        debug!("test");
+        trace!("test");
+    }
+}

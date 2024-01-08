@@ -2,10 +2,9 @@
 pub mod cascade_api {
     use crate::config::Config;
     use crate::core::{CliArgs, InitArgs};
-    use crate::log::CliLog;
-    use crate::log::Logger;
     use crate::report::{Report, ReportData, ReportHeader};
     use crate::service::http_web3;
+    use crate::{error, info};
     use web3::transports::Http;
     use web3::types::BlockNumber;
     use web3::Transport;
@@ -43,11 +42,7 @@ pub mod cascade_api {
         let node = Config::load().node_address;
 
         if node.is_empty() {
-            let log = Logger {
-                scope: "cascade".to_string(),
-            };
-
-            log.error("Node address not initialized. Use 'init' command to set the node.");
+            error!("Node address not initialized. Use 'init' command to set the node.");
             return;
         }
 
@@ -66,11 +61,7 @@ pub mod cascade_api {
         let node = Config::load().node_address;
 
         if node.is_empty() {
-            let log = Logger {
-                scope: "cascade".to_string(),
-            };
-
-            log.error("Node address not initialized. Use 'init' command to set the node.");
+            error!("Node address not initialized. Use 'init' command to set the node.");
             return;
         }
 
@@ -101,12 +92,8 @@ pub mod cascade_api {
             .await
             .expect("failed to fetch logs");
 
-        let log = Logger {
-            scope: "run_default_test".to_string(),
-        };
-
         if args.method == "logs" {
-            log.info(&format!("Logs length: {:?}", logs.len()));
+            info!("Logs length: {:?}", logs.len());
         } else {
             run_with_query_http(&web3_http, args).await;
         }
@@ -137,30 +124,24 @@ pub mod cascade_api {
 
         let get_logs = transport.execute(&args.method, params_serde).await;
 
-        let log = Logger {
-            scope: "run_with_query".to_string(),
-        };
-
         match get_logs {
-            Ok(logs) => {
-                log.info(&format!("Logs length: {:?}", logs));
+            Ok(_) => {
+                let data = [ReportData {
+                    success: true,
+                    error: None,
+                    duration: 0,
+                    result: Some("Success".to_string()),
+                }]
+                .to_vec();
 
-                // let data = [ReportData {
-                //     success: true,
-                //     error: None,
-                //     duration: 0,
-                //     result: Some(format!("{:?}", logs)),
-                // }]
-                // .to_vec();
+                let mut report = Report::new(header);
 
-                // let mut report = Report::new(header);
+                report.add_data(data[0].clone());
 
-                // report.add_data(data[0].clone());
-
-                // report.display();
+                report.display();
             }
             Err(e) => {
-                log.error(&format!("Error: {:?}", e));
+                error!("Error: {:?}", e);
             }
         }
     }

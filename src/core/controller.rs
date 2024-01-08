@@ -1,7 +1,7 @@
 use web3::transports::WebSocket;
 use web3::Transport;
 
-use crate::log::{CliLog, Logger};
+use crate::info;
 use crate::service::http_web3;
 use crate::service::websocket_web3;
 use std::fs::File;
@@ -29,11 +29,7 @@ async fn get_arb_logs(web3s: Web3<Http>) -> Vec<Log> {
         .await
         .expect("failed to fetch logs");
 
-    let log = Logger {
-        scope: "get_arb_logs".to_string(),
-    };
-
-    log.info(&format!("Logs length: {:?}", logs.len()));
+    info!("Logs length: {:?}", logs.len());
 
     logs
 }
@@ -53,14 +49,10 @@ async fn test_get_block_by_hash(block_hash: web3::types::H256, web3s: Web3<Http>
         .await
         .unwrap();
 
-    let log = Logger {
-        scope: "test_get_block_by_hash".to_string(),
-    };
-
-    log.info(&format!(
+    info!(
         "Block hash: {:?} \n Block: {:?} ",
         block_hash, get_block_by_hash
-    ));
+    );
 }
 
 async fn test_get_block_transaction_count_by_hash(
@@ -82,22 +74,14 @@ async fn test_get_block_transaction_count_by_hash(
         .await
         .unwrap();
 
-    let log = Logger {
-        scope: "test_get_block_transaction_count_by_hash".to_string(),
-    };
-
-    log.info(&format!(
+    info!(
         "Block hash: {:?} \n Block txn count: {:?}",
         block_hash, get_block_transaction_count_by_hash
-    ));
+    );
 }
 
 pub async fn test_arbitriuem() {
-    let log = Logger {
-        scope: "test_arbitriuem".to_string(),
-    };
-
-    log.info(&format!("Starting test_arbitriuem"));
+    info!("Starting test_arbitriuem");
 
     let http = Http::new("").unwrap();
     let web3s = Web3::new(http);
@@ -112,10 +96,7 @@ pub async fn test_arbitriuem() {
 
         test_get_block_transaction_count_by_hash(block_hash, web3s.clone()).await
 
-        //logger(
-        //    "info",
-        //    &format!("Txn: {:?}, Block: {:?}", txn.hash, txn.block_number),
-        //)
+        // info!("Txn: {:?}, Block: {:?}", txn.hash, txn.block_number)
     }
 
     let elapsed_time = start_time.elapsed(); // Calculate elapsed time
@@ -190,11 +171,7 @@ pub mod cli_controller {
         a: Option<Web3<Http>>,
         b: Option<Web3<WebSocket>>,
     ) {
-        let log = Logger {
-            scope: "run_with_function".to_string(),
-        };
-
-        log.info(&format!("Starting run with args: {:?}", args));
+        info!("Starting run with args: {:?}", args);
 
         let address = args.address.clone();
 
@@ -207,20 +184,16 @@ pub mod cli_controller {
         match b {
             Some(b) => {
                 let logs = eth_query::<Web3<WebSocket>>(b, args).await;
-                // logger("info", &format!("Logs length: {:?}", logs.len()));
+                // info!("Logs length: {:?}", logs.len());
             }
             None => {
                 let logs = eth_query::<Web3<Http>>(a.unwrap(), args).await;
-                // logger("info", &format!("Logs length: {:?}", logs.len()));
+                // info!("Logs length: {:?}", logs.len());
             }
         }
     }
 
     pub async fn run_with_defaults<A>(a: Web3<Http>, args: CliArgs) {
-        let log = Logger {
-            scope: "run_with_defaults".to_string(),
-        };
-
         let to_block = BlockNumber::Number(args.to.into());
         let from_block = BlockNumber::Number(args.from.into());
 
@@ -235,7 +208,7 @@ pub mod cli_controller {
             .await
             .expect("failed to fetch logs");
 
-        log.info(&format!("Logs length: {:?}", logs.len()));
+        info!("Logs length: {:?}", logs.len());
     }
 
     pub async fn eth_query<T>(transport: T, args: CliArgs) {}

@@ -27,14 +27,13 @@ pub mod cascade_request {
             }
         }
 
-        pub fn prepare_params(&self, params: String) -> Value {
-            Value::String(params)
-        }
-        pub fn prepare_call(&self, method: &str, params: Value, id: u64) -> Call {
+        pub fn prepare_call(&self, method: &str, params: String, id: u64) -> Call {
+            let param = Value::String(params);
+
             Call::MethodCall(jsonrpc_core::MethodCall {
                 jsonrpc: Some(jsonrpc_core::Version::V2),
                 method: method.to_string(),
-                params: Params::Array(vec![params]),
+                params: Params::Array(vec![param]),
                 id: jsonrpc_core::Id::Num(id),
             })
         }
@@ -71,7 +70,7 @@ pub mod cascade_request {
             }
         }
 
-        pub async fn make_request(&self, method: &str, params: Value) -> Result<Value, Error> {
+        pub async fn make_request(&self, method: &str, params: String) -> Result<Value, Error> {
             let call = self.prepare_call(method, params, 1);
 
             let request = Request::Single(call);
@@ -83,13 +82,13 @@ pub mod cascade_request {
         pub async fn make_multiple_requests(
             &self,
             method: &str,
-            params: Vec<Value>,
+            params: String,
             num_requests: usize,
         ) -> Result<Value, Error> {
             let mut requests = Vec::new();
 
             for i in 0..num_requests {
-                let call = self.prepare_call(method, params[i].clone(), i as u64);
+                let call = self.prepare_call(method, params.clone(), i as u64);
 
                 requests.push(Request::Single(call));
             }
@@ -144,7 +143,7 @@ mod tests {
     async fn test_rpc_request() {
         let rpc_request = RpcRequest::new(Some("http://localhost:8545"));
 
-        let params = Value::String("0x49d1e".to_string());
+        let params = "0x49d1e".to_string();
         let method = "debug_traceBlockByNumber";
 
         let response = rpc_request.make_request(method, params).await.unwrap();

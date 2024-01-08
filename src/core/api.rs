@@ -7,7 +7,7 @@ pub mod cascade_api {
     use crate::error;
     use crate::service::RpcRequest;
 
-    use web3::types::BlockNumber;
+    // use web3::types::BlockNumber;
 
     /// Initializes the CLI with the provided arguments.
     ///
@@ -34,23 +34,24 @@ pub mod cascade_api {
             args: args.clone(),
         };
 
-        let from_block = BlockNumber::Number(args.from.into());
-        let to_block = BlockNumber::Number(args.to.into());
-
         let request = RpcRequest::new(None);
 
-        let params = serde_json::json!({
-            "fromBlock": from_block,
-            "toBlock": to_block,
-            "address": format!("0x{}", args.address),
-        });
+        // let from_block = BlockNumber::Number(args.from.into());
+        // let to_block = BlockNumber::Number(args.to.into());
 
-        let mut response = request.make_request(&args.method, params).await;
+        // let params = serde_json::json!({
+        //     "fromBlock": from_block,
+        //     "toBlock": to_block,
+        //     "address": format!("0x{}", args.address),
+        // });
+
+        let mut response = request
+            .make_request(&args.method, args.params.clone())
+            .await;
 
         if args.depth > 1 {
-            let new_pram = request.prepare_params(args.params.to_string());
             response = request
-                .make_multiple_requests(&args.method, vec![new_pram], args.depth as usize)
+                .make_multiple_requests(&args.method, args.params.clone(), args.depth as usize)
                 .await;
         }
 

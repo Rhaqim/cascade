@@ -1,5 +1,5 @@
 pub mod cascade_cli {
-    use crate::core::{initialise_cli, run, test_cli_node};
+    use crate::core::{initialise_cli, run};
 
     use clap::{Args, Parser, Subcommand};
     use serde::Serialize;
@@ -25,9 +25,6 @@ pub mod cascade_cli {
 
         #[command(about = "Run the CLI")]
         Run(CliArgs),
-
-        #[command(about = "Test node connection")]
-        Test(CliArgs),
     }
 
     #[derive(Clone, Debug, Args)]
@@ -66,6 +63,7 @@ pub mod cascade_cli {
             help = "Method to run"
         )]
         pub method: String,
+
         #[arg(
             long,
             short = 'T',
@@ -73,6 +71,9 @@ pub mod cascade_cli {
             help = "Timeout for the request"
         )]
         pub timeout: u64,
+
+        #[arg(long, short, default_value = "1", help = "Nnumber of requests")]
+        pub depth: u64,
     }
 
     pub async fn cli_main() {
@@ -84,9 +85,6 @@ pub mod cascade_cli {
             }
             Commands::Run(args) => {
                 run(args).await;
-            }
-            Commands::Test(args) => {
-                test_cli_node(args).await;
             }
         }
     }
